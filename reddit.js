@@ -6,8 +6,18 @@ let redditPath = path.join(__dirname, 'popular-articles.json')
 
 
 requestPromise('https://reddit.com/r/popular.json')
-.then(body => {
-    JSON.parse(body).data.children.forEach(element => {
-        fs.appendFileSync(redditPath, element.data.title + '\n' + element.data.url + '\n' + element.data.author + '\n')
-    });
-}).catch(err => console.log(err));
+    .then(body => {
+        let array = []
+        JSON.parse(body).data.children.forEach(element => {
+            let article = {
+                title: element.data.title,
+                url: element.data.url,
+                author: element.data.author
+            }
+            array.push(article);
+        });
+        fs.writeFileSync(redditPath, JSON.stringify(array), function (err) {
+            if (err) throw err;
+            console.log('complete');
+        });
+    }).catch(err => console.log(err));
